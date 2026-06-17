@@ -7,16 +7,16 @@ implementado em Python com interface gráfica Pygame.
 
 | Componente | Status |
 |------------|--------|
-| Montador IJVM (assembler) | ✅ Completo |
-| Registradores (PC, MAR, MDR, MBR, SP, LV, CPP, TOS, OPC, H) | ✅ Visíveis |
-| Barramentos A, B e C | ✅ Animados no diagrama |
-| ALU + Shifter | ✅ Com flags N e Z |
-| Memória Principal | ✅ Hex dump em tempo real |
-| ROM de Microcódigo (512 × 36 bits) | ✅ Visível com destaque |
-| Cache de Instruções (I-Cache) | ✅ Hit/miss em tempo real |
-| Cache de Dados (D-Cache) | ✅ Hit/miss em tempo real |
-| Encapsulamento Docker | ✅ Dockerfile + Compose |
-| Encapsulamento VirtualBox | ✅ Documentado |
+| Montador IJVM (assembler) | Completo |
+| Registradores (PC, MAR, MDR, MBR, SP, LV, CPP, TOS, OPC, H) | Visíveis |
+| Barramentos A, B e C | Animados no diagrama |
+| ALU + Shifter | Com flags N e Z |
+| Memória Principal | Hex dump em tempo real |
+| ROM de Microcódigo (512 × 36 bits) | Visível com destaque |
+| Cache de Instruções (I-Cache) | Hit/miss em tempo real |
+| Cache de Dados (D-Cache) | Hit/miss em tempo real |
+| Encapsulamento Docker | Dockerfile + Compose |
+| Encapsulamento VirtualBox | Documentado |
 
 ---
 
