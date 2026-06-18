@@ -2,7 +2,7 @@
 """
 MIC-1 Simulator — Pygame
 ===========================
-Simulador didático da microarquitetura MIC-1 (Tanenbaum, Cap. 4).
+Simulador da microarquitetura MIC-1 (Tanenbaum, Cap. 4).
 
 Componentes visíveis na tela:
   - Datapath: registradores, barramentos A/B/C, ALU+Shifter, Memória
@@ -42,7 +42,7 @@ from cache.cache import Cache, CacheMapping, ReplacementPolicy
 logging.basicConfig(level=logging.WARNING)
 
 # ── Resolução e FPS ─────────────────────────────────────────────────────────
-WIDTH, HEIGHT = 1400, 860
+WIDTH, HEIGHT = 1400, 865
 FPS = 60
 
 # ── Paleta ───────────────────────────────────────────────────────────────────
@@ -182,7 +182,6 @@ class Simulator:
 # ── Programa demo padrão ─────────────────────────────────────────────────────
 
 FILE_SOURCE = 'examples/fibonacci.asm'
-
 
 # ── Aplicação principal ───────────────────────────────────────────────────────
 
@@ -444,13 +443,13 @@ class App:
         alu_act = last is not None
         pygame.draw.polygon(self.screen, (76,29,149) if alu_act else ALU_BG, pts)
         pygame.draw.polygon(self.screen, ALU_BORD, pts, 2)
-        self._txt("ALU+SHIFT", alux+12, alu_y+5,  self.f_small, ALU_BORD)
+        self._txt("ALU+SHIFT", alux+30, alu_y+10,  self.f_label, TEXT)
         op = last.microinstruction.alu_op.name if last else "—"
-        self._txt(op[:10],    alux+12, alu_y+22, self.f_mono,  TEXT)
+        self._txt(op[:10], alux+42, alu_y+29, self.f_mono,  TEXT)
         n_f = last.n_flag if last else False
         z_f = last.z_flag if last else False
-        fc  = YELLOW if (n_f or z_f) else TEXT_DIM
-        self._txt(f"N={int(n_f)} Z={int(z_f)}", alux+12, alu_y+44, self.f_small, fc)
+        fc  = YELLOW if (n_f or z_f) else TEXT
+        self._txt(f"N={int(n_f)} Z={int(z_f)}", alux+41, alu_y+44, self.f_small, fc)
 
         # Barramento C
         bus_cx = alux + aluw + 22
@@ -475,7 +474,7 @@ class App:
                 v  = int.from_bytes(data[a2:a2+4], "big")
                 hl = last is not None and last.mem_address == a2
                 self._txt(f"{a2:04X}:{v:08X}", mem_r.x+5, mem_r.y+22+i*18, self.f_tiny,
-                          YELLOW if hl else TEXT_DIM)
+                          YELLOW if hl else TEXT)
             if last and last.mem_address is not None:
                 op2 = "WR" if last.mem_is_write else "RD"
                 self._txt(f"{op2}@{last.mem_address:04X}", mem_r.x+5, mem_r.y+115, self.f_small, YELLOW)
@@ -788,8 +787,7 @@ class App:
 
     # ── Helper de texto ───────────────────────────────────────────────────────
 
-    def _txt(self, text: str, x: int, y: int,
-             fnt: pygame.font.Font, color: tuple) -> None:
+    def _txt(self, text: str, x: int, y: int, fnt: pygame.font.Font, color: tuple) -> None:
         self.screen.blit(fnt.render(str(text), True, color), (x, y))
 
 
