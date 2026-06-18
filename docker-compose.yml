@@ -1,0 +1,38 @@
+version: "3.9"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# MIC-1 Simulator — Docker Compose
+# Exibe a interface gráfica via X11 forwarding.
+#
+# Linux:
+#   xhost +local:docker
+#   docker compose up
+#
+# Windows (com VcXsrv rodando):
+#   set DISPLAY=host.docker.internal:0.0
+#   docker compose up
+# ─────────────────────────────────────────────────────────────────────────────
+
+services:
+  mic1:
+    build: .
+    image: mic1-simulator:latest
+    container_name: mic1-simulator
+
+    environment:
+      # Display para X11 — sobrescreva com sua variável DISPLAY se necessário
+      - DISPLAY=${DISPLAY:-host.docker.internal:0}
+      - SDL_AUDIODRIVER=dummy
+      - PYTHONUNBUFFERED=1
+
+    volumes:
+      # Socket X11 para Linux
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+
+    # Para Linux: network_mode host melhora compatibilidade com X11
+    # Para Windows/Mac: comente a linha abaixo
+    network_mode: host
+
+    stdin_open: true
+    tty: true
+    restart: "no"
