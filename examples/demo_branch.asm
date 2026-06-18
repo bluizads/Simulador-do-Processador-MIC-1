@@ -1,4 +1,3 @@
-// Exemplo 4: Demonstracao de desvios (IFEQ, IFLT, GOTO)
 .main
     BIPUSH -5
     IFLT negativo

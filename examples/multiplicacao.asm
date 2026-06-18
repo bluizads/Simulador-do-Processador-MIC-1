@@ -1,5 +1,3 @@
-// Exemplo 3: 5 * 3 = 15 (via somas repetidas)
-// local 0 = acumulador, local 1 = contador
 .main
     BIPUSH 0
     ISTORE 0

@@ -1,6 +1,3 @@
-// Exemplo 2: Fibonacci(7) = 13
-// Usa 4 variaveis locais: a(0), b(1), contador(2), temp(3)
-// Contador = n-1 iteracoes para fib(n)
 .main
     BIPUSH 0
     ISTORE 0
