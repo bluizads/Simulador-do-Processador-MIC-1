@@ -181,18 +181,20 @@ class Simulator:
 
 # ── Programa demo padrão ─────────────────────────────────────────────────────
 
-DEFAULT_SOURCE = """.main
-    BIPUSH 10       // empilha 10
-    BIPUSH 20       // empilha 20
-    IADD            // soma -> TOS = 30
-    HALT
-.end-main
-"""
+FILE_SOURCE = 'examples/fibonacci.asm'
 
 
 # ── Aplicação principal ───────────────────────────────────────────────────────
 
 class App:
+    SOURCE: str
+
+    @staticmethod
+    def get_source() -> None:
+        with open(FILE_SOURCE) as f:
+            App.SOURCE = f.read()
+
+
     def __init__(self) -> None:
         pygame.init()
         pygame.display.set_caption("MIC-1 Simulator — Pygame")
@@ -219,8 +221,8 @@ class App:
 
         # Editor
         self.editor_open   = False
-        self.editor_text   = DEFAULT_SOURCE
-        self.editor_cursor = len(DEFAULT_SOURCE)
+        self.editor_text   = App.SOURCE
+        self.editor_cursor = len(App.SOURCE)
         self.editor_msg    = ""
         self.editor_msg_ok = True
 
@@ -229,7 +231,7 @@ class App:
         self.flash_timer = 0.0
 
         # Carga inicial
-        self._assemble_and_load(DEFAULT_SOURCE, close_editor=False)
+        self._assemble_and_load(App.SOURCE, close_editor=False)
 
         # Layout dos registradores no diagrama
         self._build_reg_layout()
@@ -402,38 +404,37 @@ class App:
 
     def _draw_datapath(self) -> None:
         # Área do datapath
-        ax, ay, aw, ah = 8, 52, 460, HEIGHT - 230
+        ax, ay, aw, ah = 8, 52, 420, HEIGHT - 230
         pygame.draw.rect(self.screen, PANEL, (ax, ay, aw, ah), border_radius=4)
         pygame.draw.rect(self.screen, BORDER, (ax, ay, aw, ah), 1, border_radius=4)
         self._txt("DATAPATH  MIC-1", ax+10, ay+6, self.f_label, CYAN)
 
         snap = self.sim.cpu.registers.snapshot()
 
+        # Barramentos verticais
+        rx     = ax + 30           # borda direita dos registradores
+        bus_ax = rx + 100                 # barramento A
+        bus_bx = rx + 180                 # barramento B
+        top_y  = ay + 30
+        alu_y  = ay + 500
+
+        pygame.draw.line(self.screen, BUS_A, (bus_ax, 480), (bus_ax, alu_y+8), 3)
+        pygame.draw.line(self.screen, BUS_B, (bus_bx, top_y), (bus_bx, alu_y+8), 3)
+        self._txt("A", bus_ax-8, 520, self.f_small, BUS_A)
+        self._txt("B", bus_bx+4, top_y+140, self.f_small, BUS_B)
+
         # Registradores
         for name, rect in self.reg_rects.items():
-            r = rect.move(ax, ay)
+            r = rect.move(ax + 30, ay)
             self._draw_reg_block(name, r, snap.get(name, 0))
-
-        # Barramentos verticais
-        rx     = ax + 32 + 108           # borda direita dos registradores
-        bus_ax = rx + 28                 # barramento A
-        bus_bx = rx + 48                 # barramento B
-        top_y  = ay + 30
-        alu_y  = ay + 260
-
-        pygame.draw.line(self.screen, BUS_A, (bus_ax, top_y), (bus_ax, alu_y+8), 3)
-        pygame.draw.line(self.screen, BUS_B, (bus_bx, top_y), (bus_bx, alu_y+8), 3)
-        self._txt("A", bus_ax-8, top_y+120, self.f_small, BUS_A)
-        self._txt("B", bus_bx+4, top_y+140, self.f_small, BUS_B)
 
         # Linhas dos registradores para os barramentos
         for name, rect in self.reg_rects.items():
             r = rect.move(ax, ay)
-            pygame.draw.line(self.screen, (60,30,30), (r.right, r.centery-2), (bus_ax, r.centery-2), 1)
-            pygame.draw.line(self.screen, (30,60,30), (r.right, r.centery+2), (bus_bx, r.centery+2), 1)
+            pygame.draw.line(self.screen, (30,60,30), (r.right + 30, r.centery+2), (bus_bx, r.centery+2), 1)
 
         # ALU (trapézio)
-        alux = bus_bx + 22
+        alux = bus_bx - 100
         aluw, aluh = 120, 66
         pts = [
             (alux, alu_y), (alux+aluw, alu_y),
@@ -458,7 +459,7 @@ class App:
         self._txt("C", bus_cx+4, top_y+90, self.f_small, BUS_C)
         for _, rect in self.reg_rects.items():
             r = rect.move(ax, ay)
-            pygame.draw.line(self.screen, (20,40,80), (r.right, r.centery-5), (bus_cx, r.centery-5), 1)
+            pygame.draw.line(self.screen, (20,40,80), (r.right + 30, r.centery-5), (bus_cx, r.centery-5), 1)
 
         # Memória principal
         mx  = bus_cx + 20
@@ -505,7 +506,7 @@ class App:
     # ── Painel de registradores ───────────────────────────────────────────────
 
     def _draw_reg_panel(self) -> None:
-        ax, ay, aw, ah = 474, 52, 246, HEIGHT-230
+        ax, ay, aw, ah = 435, 52, 246, HEIGHT-230
         pygame.draw.rect(self.screen, PANEL, (ax,ay,aw,ah), border_radius=4)
         pygame.draw.rect(self.screen, BORDER,(ax,ay,aw,ah), 1, border_radius=4)
         self._txt("REGISTRADORES", ax+8, ay+6, self.f_label, CYAN)
@@ -545,7 +546,7 @@ class App:
 
     def _draw_cache_panel(self) -> None:
         """Exibe I-Cache e D-Cache com hits/misses e barra visual."""
-        ax, ay = 726, 52
+        ax, ay = 685, 52
         aw, ah = 240, HEIGHT - 230
 
         pygame.draw.rect(self.screen, PANEL,  (ax, ay, aw, ah), border_radius=4)
@@ -630,7 +631,7 @@ class App:
     # ── Painel direito (microcódigo / memória) ────────────────────────────────
 
     def _draw_right_panel(self) -> None:
-        ax, ay, aw, ah = 972, 52, WIDTH-980, HEIGHT-230
+        ax, ay, aw, ah = 930, 52, WIDTH-935, HEIGHT-230
         pygame.draw.rect(self.screen, PANEL,  (ax,ay,aw,ah), border_radius=4)
         pygame.draw.rect(self.screen, BORDER, (ax,ay,aw,ah), 1, border_radius=4)
 
@@ -793,6 +794,7 @@ class App:
 
 
 def main() -> int:
+    App.get_source()
     app = App()
     app.run()
     return 0

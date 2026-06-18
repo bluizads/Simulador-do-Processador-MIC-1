@@ -67,7 +67,7 @@ class ALUResult:
 
 class ALU:
     """
-    ALU do MIC-1.
+    ALU do MIC-1. (também inclui o shifter)
     
     Entradas: A (registrador H) e B (barramento B)
     Saída: resultado de 32 bits + flags N e Z
@@ -76,16 +76,11 @@ class ALU:
     MASK = 0xFFFF_FFFF
     SIGN = 0x8000_0000
 
+
     def __init__(self) -> None:
         self._last = ALUResult(0, False, True)
 
-    def compute(
-        self,
-        a: int,
-        b: int,
-        operation: ALUOperation,
-        shift: ShifterOperation = ShifterOperation.NONE,
-    ) -> ALUResult:
+    def compute(self, a: int, b: int, operation: ALUOperation, shift: ShifterOperation = ShifterOperation.NONE) -> ALUResult:
         """
         Executa a operação da ALU seguida do Shifter.
 

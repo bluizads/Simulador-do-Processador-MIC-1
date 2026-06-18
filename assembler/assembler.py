@@ -214,7 +214,7 @@ class Assembler:
         
         Args:
             source: Assembly source code string
-            
+        
         Returns:
             AssemblyResult with binary output and diagnostics
         """
@@ -328,14 +328,7 @@ class Assembler:
             source_map=source_map,
         )
 
-    def _resolve_operand(
-        self,
-        tok: Token,
-        mnem: str,
-        pc: int,
-        symbols: Dict[str, int],
-        errors: List[AssemblerError],
-    ) -> int:
+    def _resolve_operand(self, tok: Token, mnem: str, pc: int, symbols: Dict[str, int], errors: List[AssemblerError]) -> int:
         """Resolve a numeric or label operand."""
         if tok.type == TokenType.NUMBER:
             value = self._parse_int(tok.value)
@@ -369,13 +362,7 @@ class Assembler:
             ))
             return 0
 
-    def _handle_directive_pass1(
-        self,
-        tokens: List[Token],
-        i: int,
-        symbols: Dict[str, int],
-        errors: List[AssemblerError],
-    ) -> int:
+    def _handle_directive_pass1(self, tokens: List[Token], i: int, symbols: Dict[str, int], errors: List[AssemblerError]) -> int:
         """Process assembler directives in pass 1."""
         tok = tokens[i]
         directive = tok.value.upper()
