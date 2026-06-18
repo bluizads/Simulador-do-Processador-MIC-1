@@ -1,6 +1,6 @@
 # MIC-1 Microarchitecture Simulator
 
-Simulador didático da microarquitetura **MIC-1** (Tanenbaum, Cap. 4)
+Simulador da microarquitetura **MIC-1** (Tanenbaum, Cap. 4)
 implementado em Python com interface gráfica Pygame.
 
 ## Componentes implementados
