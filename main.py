@@ -42,7 +42,7 @@ from cache.cache import Cache, CacheMapping, ReplacementPolicy
 logging.basicConfig(level=logging.WARNING)
 
 # ── Resolução e FPS ─────────────────────────────────────────────────────────
-WIDTH, HEIGHT = 1400, 865
+WIDTH, HEIGHT = 1550, 860
 FPS = 60
 
 # ── Paleta ───────────────────────────────────────────────────────────────────
@@ -205,8 +205,8 @@ class App:
         self.f_title = font(14, bold=True)
         self.f_label = font(12, bold=True)
         self.f_mono  = font(12)
-        self.f_small = font(10)
-        self.f_tiny  = font(9)
+        self.f_small = font(11)
+        self.f_tiny  = font(10)
 
         self.sim = Simulator()
 
@@ -473,17 +473,14 @@ class App:
                 a2 = i * 4
                 v  = int.from_bytes(data[a2:a2+4], "big")
                 hl = last is not None and last.mem_address == a2
-                self._txt(f"{a2:04X}:{v:08X}", mem_r.x+5, mem_r.y+22+i*18, self.f_tiny,
-                          YELLOW if hl else TEXT)
+                self._txt(f"{a2:04X}:{v:08X}", mem_r.x+5, mem_r.y+22+i*18, self.f_tiny, YELLOW if hl else TEXT)
             if last and last.mem_address is not None:
                 op2 = "WR" if last.mem_is_write else "RD"
                 self._txt(f"{op2}@{last.mem_address:04X}", mem_r.x+5, mem_r.y+115, self.f_small, YELLOW)
 
         # Legenda
         ly = ay + ah - 62
-        for i, (col, lbl) in enumerate([
-            (BUS_A,"Bus A (H→ALU)"), (BUS_B,"Bus B (regs→ALU)"), (BUS_C,"Bus C (ALU→regs)")
-        ]):
+        for i, (col, lbl) in enumerate([(BUS_A,"Bus A (H→ALU)"), (BUS_B,"Bus B (regs→ALU)"), (BUS_C,"Bus C (ALU→regs)")]):
             y2 = ly + i*18
             pygame.draw.line(self.screen, col, (ax+10, y2+7), (ax+30, y2+7), 3)
             self._txt(lbl, ax+36, y2, self.f_small, TEXT_DIM)
@@ -499,8 +496,7 @@ class App:
         bits   = 8 if name == "MBR" else 32
         digits = bits // 4
         v      = value & ((1 << bits)-1)
-        self._txt(f"{v:0{digits}X}", rect.x+4, rect.y+16, self.f_mono,
-                  REG_ACTIVE if active else CYAN)
+        self._txt(f"{v:0{digits}X}", rect.x+4, rect.y+16, self.f_mono, REG_ACTIVE if active else CYAN)
 
     # ── Painel de registradores ───────────────────────────────────────────────
 
@@ -554,10 +550,7 @@ class App:
 
         y = ay + 30
 
-        for cache_obj, name, flash_val, color in [
-            (self.sim.icache, "I-Cache", self.sim.last_icache_hit, CYAN),
-            (self.sim.dcache, "D-Cache", self.sim.last_dcache_hit, PINK),
-        ]:
+        for cache_obj, name, flash_val, color in [(self.sim.icache, "I-Cache", self.sim.last_icache_hit, CYAN), (self.sim.dcache, "D-Cache", self.sim.last_dcache_hit, PINK)]:
             # Título do cache
             self._txt(name, ax+8, y, self.f_label, color)
             y += 18
@@ -579,8 +572,7 @@ class App:
                     YELLOW     if rate >= 0.4 else
                     MISS_COLOR
                 )
-                pygame.draw.rect(self.screen, rate_color,
-                                 pygame.Rect(ax+8, y, fill_w, bar_h), border_radius=3)
+                pygame.draw.rect(self.screen, rate_color, pygame.Rect(ax+8, y, fill_w, bar_h), border_radius=3)
             self._txt(f"{rate*100:.1f}%", ax + bar_w - 30, y, self.f_tiny, TEXT)
             y += 18
 
@@ -668,7 +660,7 @@ class App:
                 pygame.draw.rect(self.screen, (20,50,0), row, border_radius=2)
 
             c_addr  = YELLOW   if is_cur else TEXT_MUT
-            c_lbl   = GREEN    if is_cur else TEXT_DIM
+            c_lbl   = GREEN    if is_cur else TEXT
             c_op    = PURPLE   if is_cur else (60,60,100)
             c_nxt   = YELLOW   if is_cur else TEXT_MUT
 
@@ -697,10 +689,9 @@ class App:
             hexs  = " ".join(f"{b:02X}" for b in chunk)
             hl    = hl_addr is not None and addr <= hl_addr < addr + bpr*4
             if hl:
-                pygame.draw.rect(self.screen, (40,30,0),
-                                 pygame.Rect(ax+6,y-2,aw-12,16), border_radius=2)
+                pygame.draw.rect(self.screen, (40,30,0), pygame.Rect(ax+6,y-2,aw-12,16), border_radius=2)
             self._txt(f"{addr:04X}", ax+8,    y, self.f_small, YELLOW if hl else TEXT_DIM)
-            self._txt(hexs,          ax+52,   y, self.f_tiny,  CYAN if hl else TEXT_MUT)
+            self._txt(hexs,          ax+45,   y, self.f_tiny,  CYAN if hl else TEXT_MUT)
             y += 17
 
     # ── Log ───────────────────────────────────────────────────────────────────
